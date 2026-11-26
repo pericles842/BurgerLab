@@ -1,0 +1,61 @@
+---
+// Paneles de opciones por categoría (un panel visible a la vez).
+import Icon from '../Icon.astro';
+import { CATEGORIES } from '../../data/menu';
+import { money } from '../../lib/format';
+interface Props { kiosk?: boolean; class?: string }
+const { kiosk = false, class: cls = '' } = Astro.props;
+---
+<div class={cls} data-panels>
+  {CATEGORIES.map((c, i) => (
+    <div data-panel={c.id} class:list={[kiosk ? 'pt-1' : 'pt-3 sm:pt-4', i !== 0 && 'hidden']}>
+      <!-- encabezado del paso -->
+      <div class:list={['flex justify-between gap-2', kiosk ? 'items-end gap-4 mb-5' : 'items-center mb-4 sm:mb-5 sm:items-end sm:gap-4']}>
+        <div class="flex items-center gap-3 min-w-0">
+          <span class:list={['shrink-0 grid place-items-center rounded-lg bg-brand-100 text-brand', kiosk ? 'h-14 w-14' : 'h-10 w-10 sm:h-11 sm:w-11']}><Icon name={c.icon} class={kiosk ? 'h-8 w-8' : 'h-5 w-5 sm:h-6 sm:w-6'} /></span>
+          <div class="min-w-0">
+            <p class="text-[10px] sm:text-xs font-semibold text-navy/50 uppercase tracking-widest">Paso {i + 1} de {CATEGORIES.length}</p>
+            <h3 class:list={['font-display font-black uppercase tracking-tight leading-none truncate', kiosk ? 'text-4xl' : 'text-xl sm:text-2xl']}>{c.title}</h3>
+          </div>
+        </div>
+        <p class:list={['shrink-0 text-right', kiosk ? 'text-base font-semibold text-navy/60' : 'text-[11px] sm:text-sm font-semibold sm:font-normal text-brand sm:text-navy/60 bg-brand-50 sm:bg-transparent rounded-md px-2 py-1 sm:p-0']}>
+          {c.mode === 'single' ? (c.required ? 'Elige 1' : 'Elige 1 (opcional)') : c.max ? `Hasta ${c.max}` : 'Elige varios'}
+        </p>
+      </div>
+
+      <!-- opciones -->
+      <div class:list={['grid', kiosk ? 'grid-cols-2 xl:grid-cols-3 gap-4' : 'grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3']}>
+        {c.items.map((it) => (
+          <button data-item={it.id} data-cat={c.id} aria-pressed="false"
+            class:list={['group relative rounded-xl bg-white border-2 border-brand-100/60 text-left transition hover:border-brand-200 hover:shadow-lg hover:shadow-brand/10 aria-pressed:border-brand aria-pressed:bg-brand-50',
+              kiosk ? 'p-4 active:scale-[0.97]' : 'p-2.5 sm:p-3 active:scale-[0.97] sm:hover:-translate-y-0.5']}>
+            <span class:list={['absolute rounded-md grid place-items-center bg-brand-50 text-transparent group-aria-pressed:bg-brand group-aria-pressed:text-white transition', kiosk ? 'top-3 right-3 h-8 w-8' : 'top-2 right-2 h-6 w-6']}>
+              <Icon name="tabler:check" class={kiosk ? 'h-5 w-5' : 'h-4 w-4'} />
+            </span>
+            <div class:list={['flex items-center justify-center', kiosk ? 'h-32' : 'h-20 sm:h-24']}>
+              <img src={it.img} alt={it.name} loading="lazy" class:list={['max-w-full object-contain group-hover:scale-105 transition', kiosk ? 'max-h-32' : 'max-h-20 sm:max-h-24']} />
+            </div>
+            <p class:list={['mt-2 font-semibold leading-tight', kiosk ? 'text-lg' : 'text-[13px] sm:text-sm']}>{it.name}</p>
+            <p class:list={['font-bold text-brand mt-0.5', kiosk ? 'text-base' : 'text-xs']}>{money(it.price)}</p>
+          </button>
+        ))}
+      </div>
+
+      <!-- navegación entre pasos -->
+      <div class:list={['flex justify-between items-center gap-2', kiosk ? 'mt-6 pb-4' : 'mt-5 sm:mt-6']}>
+        {i > 0
+          ? <button data-goto={CATEGORIES[i - 1].id} class:list={['inline-flex items-center gap-1.5 rounded-lg font-semibold text-navy/70 hover:text-navy border border-brand-100 bg-white', kiosk ? 'px-6 py-4 text-base' : 'px-3 py-2.5 text-sm']}>
+              <Icon name="tabler:arrow-left" class="h-4 w-4" /><span class:list={[!kiosk && 'hidden min-[400px]:inline']}>{CATEGORIES[i - 1].title}</span>
+            </button>
+          : <span />}
+        {i < CATEGORIES.length - 1
+          ? <button data-goto={CATEGORIES[i + 1].id} class:list={['inline-flex items-center gap-2 rounded-lg bg-navy text-white font-semibold hover:bg-navy-700 min-w-0', kiosk ? 'px-8 py-4 text-lg' : 'px-4 sm:px-5 py-2.5 text-sm']}>
+              <span class="truncate"><span class:list={[!kiosk && 'hidden sm:inline']}>Siguiente: </span>{CATEGORIES[i + 1].title}</span> <Icon name="tabler:arrow-right" class="h-5 w-5 shrink-0" />
+            </button>
+          : kiosk
+            ? <button data-open-summary data-requires-protein class="inline-flex items-center gap-2 rounded-lg bg-brand text-white px-8 py-4 text-lg font-semibold hover:bg-brand-600 disabled:opacity-40">Revisar pedido <Icon name="tabler:arrow-right" class="h-5 w-5" /></button>
+            : <a href="#pedido" class="inline-flex items-center gap-2 rounded-lg bg-brand text-white px-5 py-2.5 text-sm font-semibold hover:bg-brand-600">Ver mi pedido <Icon name="tabler:arrow-right" class="h-4 w-4" /></a>}
+      </div>
+    </div>
+  ))}
+</div>

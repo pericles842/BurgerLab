@@ -1,0 +1,20 @@
+---
+// Iconos Tabler (Iconify) renderizados como SVG en línea, sin dependencias en el cliente.
+// Uso: <Icon name="tabler:burger" class="h-5 w-5" />
+import { getIconData, iconToSVG, iconToHTML, replaceIDs } from '@iconify/utils';
+import tabler from '@iconify-json/tabler/icons.json';
+
+interface Props { name: string; class?: string; label?: string }
+const { name, class: cls = '', label } = Astro.props;
+const [, icon] = name.split(':');
+const data = getIconData(tabler as any, icon);
+if (!data) throw new Error(`Icono no encontrado: ${name}`);
+const { attributes, body } = iconToSVG(data, { height: 'auto' });
+const html = iconToHTML(replaceIDs(body), {
+  ...attributes,
+  class: cls,
+  fill: 'none',
+  ...(label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': 'true' }),
+});
+---
+<Fragment set:html={html} />

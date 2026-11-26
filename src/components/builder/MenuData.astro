@@ -1,0 +1,10 @@
+---
+// Datos del menú para el cliente + la lógica compartida del creador.
+import { CATEGORIES, BUNS, PRESETS } from '../../data/menu';
+import { RATIOS, STACK_OVERLAP, TOP_TUCK } from '../../lib/stack';
+const clientData = { categories: CATEGORIES, buns: BUNS, presets: PRESETS, ratios: RATIOS, overlap: STACK_OVERLAP, tuck: TOP_TUCK };
+---
+<script is:inline type="application/json" id="menu-data" set:html={JSON.stringify(clientData)}></script>
+<script>
+  import '../../scripts/builder';
+</script>

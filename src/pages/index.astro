@@ -1,0 +1,382 @@
+---
+import Icon from '../components/Icon.astro';
+import Layout from '../layouts/Layout.astro';
+import BurgerStack from '../components/BurgerStack.astro';
+import SectionTitle from '../components/SectionTitle.astro';
+import BuilderPreview from '../components/builder/BuilderPreview.astro';
+import BuilderTabs from '../components/builder/BuilderTabs.astro';
+import BuilderPanels from '../components/builder/BuilderPanels.astro';
+import OrderSummary from '../components/builder/OrderSummary.astro';
+import MenuData from '../components/builder/MenuData.astro';
+import { PRESETS } from '../data/menu';
+import { money, priceOf } from '../lib/format';
+
+// borde rasgado del footer: picos irregulares que terminan exactamente en x=1440
+const TORN = (() => {
+  let seed = 7;
+  const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
+  const pts: string[] = ['M0 56', 'L0 30'];
+  let x = 0, up = true;
+  while (x < 1440) {
+    x = Math.min(1440, x + 22 + Math.round(rnd() * 38));
+    const y = up ? 2 + Math.round(rnd() * 14) : 30 + Math.round(rnd() * 18);
+    pts.push(`L${x} ${y}`);
+    up = !up;
+  }
+  return pts.join(' ') + ' L1440 56 Z';
+})();
+
+const COFFEE_CODE = {
+  web: 'https://www.coffeecode.es',
+  handle: 'coffeecode.ve',
+  social: [
+    { icon: 'tabler:brand-instagram', label: 'Instagram', href: 'https://www.instagram.com/coffeecode.ve' },
+    { icon: 'tabler:brand-facebook', label: 'Facebook', href: 'https://www.facebook.com/coffeecode.ve' },
+    { icon: 'tabler:brand-tiktok', label: 'TikTok', href: 'https://www.tiktok.com/@coffeecode.ve' },
+  ],
+};
+
+const nav = [
+  { href: '#inicio', label: 'Inicio' },
+  { href: '#menu', label: 'Menú' },
+  { href: '#crear', label: 'Crear' },
+  { href: '#combos', label: 'Combos' },
+  { href: '#pedido', label: 'Mi pedido' },
+];
+const features = [
+  { icon: 'tabler:leaf', title: 'Ingredientes frescos', text: 'Solo lo más fresco, todos los días.' },
+  { icon: 'tabler:truck-delivery', title: 'Entrega rápida', text: 'Caliente y a tiempo en tu puerta.' },
+  { icon: 'tabler:crown', title: 'Sabor premium', text: 'Recetas audaces, sabor inolvidable.' },
+  { icon: 'tabler:tag', title: 'Precio justo', text: 'Gran sabor sin romper el bolsillo.' },
+];
+---
+<Layout>
+  <div data-builder="web" data-scroll-target="#crear">
+  <!-- ============ HEADER ============ -->
+  <header class="sticky top-0 z-50 bg-paper/90 backdrop-blur border-b border-brand-100/70">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <a href="#inicio" class="flex items-center gap-2">
+        <span class="grid place-items-center h-9 w-9 rounded-xl bg-brand text-white shadow-md shadow-brand/30">
+          <Icon name="tabler:burger" class="h-5 w-5" />
+        </span>
+        <span class="font-display font-black text-xl tracking-tight">Burger<span class="text-brand">Lab</span></span>
+      </a>
+      <nav class="hidden md:flex items-center gap-8 text-sm font-semibold" aria-label="Principal">
+        {nav.map((n, i) => <a href={n.href} class:list={['transition hover:text-brand', i === 0 ? 'text-brand' : 'text-navy']}>{n.label}</a>)}
+      </nav>
+      <div class="flex items-center gap-2">
+        <a href="/pedido" class="hidden min-[400px]:inline-flex items-center gap-2 rounded-full border-2 border-navy px-3 sm:px-3.5 py-1.5 text-sm font-semibold hover:bg-navy hover:text-white transition" title="Pantalla de pedido táctil">
+          <Icon name="tabler:device-tablet" class="h-4 w-4" />
+          <span class="hidden sm:inline">Modo pedido</span>
+        </a>
+        <a href="#pedido" class="inline-flex items-center gap-2 rounded-full bg-navy text-white pl-4 pr-1.5 py-1.5 text-sm font-semibold hover:bg-navy-700 transition">
+          <Icon name="tabler:shopping-bag" class="h-4 w-4" />
+          <span class="hidden lg:inline">Mi pedido</span>
+          <span data-total-badge class="rounded-full bg-brand px-2.5 py-1 text-xs font-bold">$0.00</span>
+        </a>
+        <button data-menu-toggle aria-expanded="false" aria-controls="mobile-menu" aria-label="Abrir menú"
+          class="md:hidden grid place-items-center h-10 w-10 rounded-full bg-white border border-brand-100 active:scale-95 transition">
+          <Icon name="tabler:menu-2" class="h-5 w-5 menu-open-icon" />
+          <Icon name="tabler:x" class="h-5 w-5 menu-close-icon hidden" />
+        </button>
+      </div>
+    </div>
+    <!-- menú móvil -->
+    <nav id="mobile-menu" data-mobile-menu hidden class="md:hidden border-t border-brand-100 bg-paper/95 backdrop-blur px-4 pb-5 pt-2" aria-label="Menú móvil">
+      {nav.map((n) => (
+        <a href={n.href} data-menu-link class="flex items-center justify-between py-3.5 border-b border-brand-100 font-display font-black uppercase text-xl tracking-tight active:text-brand">
+          {n.label} <Icon name="tabler:arrow-right" class="h-5 w-5 text-brand" />
+        </a>
+      ))}
+      <a href="/pedido" class="mt-4 flex items-center justify-center gap-2 rounded-full bg-navy text-white py-3.5 font-semibold">
+        <Icon name="tabler:device-tablet" class="h-5 w-5" /> Modo pedido (pantalla táctil)
+      </a>
+    </nav>
+  </header>
+
+  <!-- ============ HERO ============ -->
+  <section id="inicio" class="relative overflow-hidden" data-hero>
+    <!-- patrón de llaves { } de Coffee Code + puntos -->
+    <svg class="absolute inset-0 h-full w-full text-navy pointer-events-none [mask-image:radial-gradient(ellipse_at_30%_40%,black_20%,transparent_75%)]" aria-hidden="true">
+      <defs>
+        <pattern id="braces" width="96" height="96" patternUnits="userSpaceOnUse">
+          <text x="10" y="40" font-family="Rubik, sans-serif" font-weight="900" font-size="28" fill="currentColor" opacity=".07">{'{ }'}</text>
+          <circle cx="72" cy="72" r="2" fill="currentColor" opacity=".12" />
+          <circle cx="24" cy="80" r="1.5" fill="currentColor" opacity=".08" />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#braces)" />
+    </svg>
+    <div class="absolute -top-40 -left-40 h-[30rem] w-[30rem] rounded-full bg-brand/10 blur-3xl"></div>
+
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 pt-10 pb-20 lg:pt-14 grid lg:grid-cols-[1.05fr_1fr] gap-10 items-center">
+      <!-- Texto -->
+      <div class="relative z-10">
+        <h1 class="font-display font-black uppercase leading-[0.9] tracking-tight text-[2.6rem] min-[400px]:text-[3rem] sm:text-7xl lg:text-[5.6rem]">
+          <span class="block">Créala</span>
+          <span class="relative block h-[0.95em] overflow-hidden text-brand" data-words aria-live="polite">
+            <span class="word is-active">a tu gusto</span>
+            <span class="word">con todo</span>
+            <span class="word">sin límites</span>
+            <span class="word">a tu manera</span>
+          </span>
+        </h1>
+        <p class="mt-5 sm:mt-6 text-base sm:text-lg font-medium max-w-md leading-snug text-navy/80">
+          Hamburguesas premium armadas por ti, capa por capa, con ingredientes frescos y sabores audaces.
+        </p>
+        <div class="mt-7 sm:mt-8 grid grid-cols-2 sm:flex sm:flex-wrap gap-3">
+          <a href="#crear" class="group inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 sm:px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand/30 hover:bg-brand-600 transition">
+            Crear mi burger <Icon name="tabler:arrow-right" class="h-5 w-5 transition group-hover:translate-x-1" />
+          </a>
+          <a href="#menu" class="text-center rounded-full border-2 border-navy px-5 sm:px-7 py-3 font-semibold hover:bg-navy hover:text-white transition">Ver menú</a>
+        </div>
+        <dl class="mt-8 sm:mt-10 grid grid-cols-3 gap-2 sm:gap-3 max-w-md">
+          {[
+            { n: 48, pre: '', suf: '', label: 'Ingredientes', icon: 'tabler:salad' },
+            { n: 10, pre: '+', suf: 'k', label: 'Combinaciones', icon: 'tabler:sparkles' },
+            { n: 4.9, pre: '', suf: '', label: 'Valoración', icon: 'tabler:star-filled' },
+          ].map((st) => (
+            <div class="rounded-2xl bg-white/80 backdrop-blur border border-brand-100 p-2.5 sm:p-3">
+              <Icon name={st.icon} class="h-5 w-5 text-brand" />
+              <dt class="sr-only">{st.label}</dt>
+              <dd class="mt-1 font-display font-black text-xl sm:text-2xl leading-none">{st.pre}<span data-count-to={st.n}>{st.n}</span>{st.suf}</dd>
+              <p class="text-[11px] font-semibold text-navy/60 mt-1">{st.label}</p>
+            </div>
+          ))}
+        </dl>
+      </div>
+
+      <!-- Escena -->
+      <div class="relative flex justify-center mb-8 lg:mb-0">
+        <!-- ingredientes flotantes (parallax) -->
+        <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div data-depth="28" class="absolute left-[2%] top-[6%] w-20 sm:w-24"><img src="/piezas/vegetales/tomate.png" alt="" class="float-a drop-shadow-xl" style="--r:-12deg" /></div>
+          <div data-depth="-22" class="absolute right-[0%] top-[2%] w-16 sm:w-20"><img src="/piezas/vegetales/lechuga.png" alt="" class="float-b drop-shadow-xl" style="--r:12deg" /></div>
+          <div data-depth="18" class="absolute left-[-2%] bottom-[22%] w-16 sm:w-20"><img src="/piezas/vegetales/pepinillos.png" alt="" class="float-b drop-shadow-xl" style="--r:6deg" /></div>
+          <div data-depth="-30" class="absolute right-[3%] bottom-[34%] w-14 sm:w-16"><img src="/piezas/vegetales/jalapenos.png" alt="" class="float-a drop-shadow-xl" style="--r:-6deg" /></div>
+          <div data-depth="12" class="absolute left-[40%] top-[-3%] w-14"><img src="/piezas/vegetales/aguacate.png" alt="" class="float-c drop-shadow-xl" style="--r:20deg" /></div>
+        </div>
+
+        <!-- sello giratorio -->
+        <div class="absolute left-[3%] top-[36%] z-30 hidden sm:grid place-items-center h-24 w-24 rounded-full bg-navy text-white shadow-xl" data-depth="10">
+          <svg viewBox="0 0 100 100" class="absolute inset-0 spin-slow" aria-hidden="true">
+            <defs><path id="circle-txt" d="M50 50m-38 0a38 38 0 1 1 76 0a38 38 0 1 1-76 0" /></defs>
+            <text font-size="10.5" font-weight="700" letter-spacing="2.6" fill="currentColor" font-family="Poppins, sans-serif"><textPath href="#circle-txt">HECHO A TU GUSTO • 100% FRESCO •</textPath></text>
+          </svg>
+          <Icon name="tabler:burger" class="h-8 w-8 text-brand" />
+        </div>
+
+        <!-- hamburguesas que se construyen -->
+        <div class="relative z-20 w-[62%] max-w-[330px] pt-8">
+          <div class="float relative min-h-[290px] sm:min-h-[400px]">
+            {Object.entries(PRESETS).map(([id, pr], i) => (
+              <div data-hero-slide={id} class:list={['absolute inset-x-0 bottom-0', i !== 0 && 'hidden']}>
+                <BurgerStack pick={pr.pick} eager build={i === 0} compact />
+              </div>
+            ))}
+          </div>
+          <div class="mx-auto -mt-3 h-6 w-[85%] rounded-[50%] bg-navy/30 blur-md"></div>
+        </div>
+
+        <!-- tarjeta flotante con el combo actual -->
+        <div class="absolute right-0 sm:right-[2%] bottom-[12%] sm:bottom-[14%] z-30 rounded-2xl bg-white/95 backdrop-blur shadow-xl shadow-navy/10 border border-brand-100 p-2 pr-3 sm:p-3 sm:pr-4 flex items-center gap-2 sm:gap-3 scale-90 sm:scale-100 origin-bottom-right" data-depth="-14">
+          <span class="grid place-items-center h-10 w-10 rounded-xl bg-brand-100 text-brand"><Icon name="tabler:chef-hat" class="h-5 w-5" /></span>
+          <div>
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-navy/50">De la casa</p>
+            <p class="font-display font-black uppercase leading-none" data-hero-name>{Object.values(PRESETS)[0].name}</p>
+            <p class="text-sm font-bold text-brand" data-hero-price>{money(priceOf(Object.values(PRESETS)[0].pick))}</p>
+          </div>
+        </div>
+
+        <!-- selector de hamburguesa -->
+        <div class="absolute -bottom-8 left-1/2 -translate-x-1/2 z-30 flex gap-1.5 rounded-full bg-white shadow-lg shadow-navy/10 border border-brand-100 p-1.5" role="tablist" aria-label="Hamburguesas de la casa">
+          {Object.entries(PRESETS).map(([id, pr], i) => (
+            <button role="tab" data-hero-tab={id} data-hname={pr.name} data-hprice={money(priceOf(pr.pick))} aria-selected={i === 0 ? 'true' : 'false'}
+              class="relative overflow-hidden rounded-full px-3.5 py-1.5 text-xs font-semibold whitespace-nowrap transition text-navy/70 hover:text-navy aria-selected:bg-navy aria-selected:text-white">
+              {pr.name}
+              <span class="hero-progress absolute left-0 bottom-0 h-0.5 bg-brand"></span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- cinta en movimiento -->
+    <div class="relative z-10 -rotate-[1.5deg] bg-navy py-3.5 overflow-hidden border-y-4 border-brand w-[106%] -ml-[3%] mt-2 mb-12">
+      <div class="marquee flex w-max text-white pl-[3%]">
+        {[0, 1].map(() => (
+          <div class="flex shrink-0 items-center gap-10 pr-10" aria-hidden="true">
+            {[['tabler:leaf', 'Ingredientes frescos'], ['tabler:flame', 'A la parrilla'], ['tabler:hand-click', 'Hecho a tu gusto'], ['tabler:truck-delivery', 'Entrega rápida'], ['tabler:cheese', 'Queso fundido'], ['tabler:brand-whatsapp', 'Pide por WhatsApp']].map(([ic, t]) => (
+              <span class="flex items-center gap-3 font-display font-black uppercase text-base sm:text-lg tracking-tight whitespace-nowrap">
+                <Icon name={ic} class="h-6 w-6 text-brand" />{t}<span class="text-brand ml-7">✦</span>
+              </span>
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ MENÚ DESTACADO ============ -->
+  <section id="menu" class="bg-white">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 py-14">
+      <SectionTitle>Nuestro menú destacado</SectionTitle>
+      <div class="mt-8 sm:mt-10 -mx-4 px-4 flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-2 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-5 sm:overflow-visible">
+        {Object.entries(PRESETS).map(([id, pr]) => (
+          <article class="group shrink-0 w-[74%] min-[480px]:w-[46%] sm:w-auto snap-start rounded-3xl bg-brand-50 p-5 flex flex-col transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/10">
+            <div class="h-48 flex items-end justify-center">
+              <BurgerStack pick={pr.pick} class="w-[58%] max-w-[150px] group-hover:scale-105 transition duration-300" />
+            </div>
+            <h3 class="mt-5 font-display font-black uppercase text-xl tracking-tight">{pr.name}</h3>
+            <p class="mt-1 text-sm text-navy/70 leading-snug flex-1">{pr.desc}</p>
+            <div class="mt-4 flex items-center justify-between">
+              <span class="font-bold text-brand">{money(priceOf(pr.pick))}</span>
+              <button data-preset={id} class="inline-flex items-center gap-1.5 rounded-full bg-navy text-white text-xs font-semibold px-3.5 py-2 hover:bg-brand transition">
+                <Icon name="tabler:pencil" class="h-3.5 w-3.5" /> Personalizar
+              </button>
+            </div>
+          </article>
+        ))}
+        <article class="group shrink-0 w-[74%] min-[480px]:w-[46%] sm:w-auto snap-start rounded-3xl bg-brand-50 p-5 flex flex-col transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/10">
+          <div class="h-48 relative flex items-end justify-center">
+            <img src="/piezas/bebidas/cola.png" alt="" class="absolute right-3 bottom-4 h-32" />
+            <img src="/piezas/acompanantes/papas.png" alt="" class="absolute right-10 bottom-0 h-20 z-10" />
+            <BurgerStack pick={PRESETS.clasica.pick} class="w-[50%] max-w-[130px] -translate-x-8 group-hover:scale-105 transition duration-300" />
+          </div>
+          <h3 class="mt-5 font-display font-black uppercase text-xl tracking-tight">Combo completo</h3>
+          <p class="mt-1 text-sm text-navy/70 leading-snug flex-1">Burger, papas y bebida. El combo perfecto.</p>
+          <div class="mt-4 flex items-center justify-between">
+            <span class="font-bold text-brand">{money(priceOf(PRESETS.clasica.pick))}</span>
+            <button data-preset="clasica" class="inline-flex items-center gap-1.5 rounded-full bg-navy text-white text-xs font-semibold px-3.5 py-2 hover:bg-brand transition">
+              <Icon name="tabler:pencil" class="h-3.5 w-3.5" /> Personalizar
+            </button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CREADOR ============ -->
+  <section id="crear" class="scroll-mt-16" data-builder-section>
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 pt-16 pb-8">
+      <SectionTitle>Crea tu burger</SectionTitle>
+      <p class="mt-3 text-center text-navy/70">Elige cada capa y mírala construirse en tiempo real.</p>
+    </div>
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 pb-16 grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-8">
+      <div class="lg:sticky lg:top-20 self-start">
+        <BuilderPreview />
+      </div>
+      <div>
+        <div class="sticky top-16 z-30 -mx-4 px-4 sm:mx-0 sm:px-0 bg-paper/90 backdrop-blur py-3">
+          <BuilderTabs />
+        </div>
+        <BuilderPanels />
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BANNER COMBOS ============ -->
+  <section id="combos" class="mx-auto max-w-7xl px-4 sm:px-6 scroll-mt-20">
+    <div data-reveal="scale" class="relative rounded-[2rem] bg-navy overflow-hidden grid md:grid-cols-[2fr_3fr] items-center">
+      <div class="absolute inset-0 opacity-60" style="background: radial-gradient(circle at 75% 55%, rgba(51,108,255,.45), transparent 55%)"></div>
+      <div class="relative p-7 sm:p-12 text-center md:text-left">
+        <p data-reveal style="--rd:0ms" class="font-display font-black uppercase text-brand tracking-[0.3em] text-sm flex items-center gap-3 justify-center md:justify-start">
+          <span class="h-0.5 w-8 bg-brand"></span>Nuestros<span class="h-0.5 w-8 bg-brand"></span>
+        </p>
+        <h2 data-reveal style="--rd:120ms" class="mt-2 font-display font-black uppercase leading-[0.85] text-5xl min-[400px]:text-6xl sm:text-7xl text-white">Mejores<br /><span class="text-brand">combos</span></h2>
+        <button data-preset="bbq" data-reveal style="--rd:240ms" class="mt-7 inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3 font-semibold text-white hover:bg-brand-600 transition">
+          Pedir combo <Icon name="tabler:arrow-right" class="h-5 w-5" />
+        </button>
+      </div>
+      <div class="relative flex items-end justify-center px-6 pb-10 pt-4 md:pt-10">
+        <div class="absolute bottom-8 inset-x-10 h-6 rounded-[50%] bg-black/40 blur-md"></div>
+        <div data-reveal="pop" style="--rd:260ms" class="relative w-[28%] max-w-[150px] -mr-[4%] mb-3"><BurgerStack pick={PRESETS.verde.pick} /></div>
+        <div data-reveal="pop" style="--rd:120ms" class="relative z-10 w-[36%] max-w-[190px]"><BurgerStack pick={PRESETS.bbq.pick} /></div>
+        <div data-reveal="pop" style="--rd:380ms" class="relative w-[28%] max-w-[150px] -ml-[4%] mb-3"><BurgerStack pick={PRESETS.clasica.pick} /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ BENEFICIOS ============ -->
+  <section class="mx-auto max-w-7xl px-4 sm:px-6 py-10">
+    <div class="rounded-3xl bg-white border border-brand-100 grid sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 lg:divide-x divide-brand-100">
+      {features.map((f, i) => (
+        <div data-reveal style={`--rd:${i * 110}ms`} class="group flex items-start gap-4 p-5 sm:p-6">
+          <span class="grid place-items-center h-12 w-12 shrink-0 rounded-2xl bg-brand-100 text-brand transition duration-300 group-hover:bg-brand group-hover:text-white group-hover:-rotate-6"><Icon name={f.icon} class="h-6 w-6" /></span>
+          <div>
+            <p class="font-display font-black uppercase text-sm tracking-tight">{f.title}</p>
+            <p class="text-sm text-navy/60 leading-snug mt-1">{f.text}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- ============ PEDIDO ============ -->
+  <section id="pedido" class="mx-auto max-w-7xl px-4 sm:px-6 pb-16 scroll-mt-20">
+    <OrderSummary />
+  </section>
+
+  <!-- ============ CTA + FOOTER ============ -->
+  <footer class="relative bg-brand text-white mt-6">
+    <svg viewBox="0 0 1440 56" preserveAspectRatio="none" class="absolute -top-[55px] left-0 w-full h-14 text-brand" aria-hidden="true">
+      <path fill="currentColor" d={TORN} />
+    </svg>
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 py-12 grid md:grid-cols-[1fr_auto] gap-8 items-center">
+      <div>
+        <h2 class="font-display font-black uppercase text-[2.1rem] min-[400px]:text-4xl sm:text-5xl leading-none">¿Antojo de burger?</h2>
+        <p class="mt-2 font-display font-black uppercase text-navy text-lg sm:text-xl">Créala y pídela en menos de un minuto.</p>
+      </div>
+      <a href="#crear" class="inline-flex items-center justify-center gap-2 rounded-full bg-navy px-8 py-4 font-semibold hover:bg-navy-900 transition w-full md:w-auto">
+        <Icon name="tabler:hand-click" class="h-5 w-5" /> Empezar ahora
+      </a>
+    </div>
+    <!-- créditos Coffee Code: discretos, en una sola franja -->
+    <div class="border-t border-white/15">
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-white/60">
+        <p class="order-last md:order-none">© 2026 Burger Lab</p>
+
+        <a href={COFFEE_CODE.web} target="_blank" rel="noopener" aria-label="Desarrollado por Coffee Code"
+          class="group inline-flex items-center gap-2.5 opacity-70 hover:opacity-100 transition">
+          <span class="uppercase tracking-[0.2em] text-[10px] font-semibold">Desarrollado por</span>
+          <img src="/brand/logo-horizontal-blanco.png" alt="Coffee Code" class="h-5 w-auto" />
+        </a>
+
+        <div class="flex items-center gap-4">
+          <a href={COFFEE_CODE.web} target="_blank" rel="noopener" class="hover:text-white transition">www.coffeecode.es</a>
+          <span class="h-3 w-px bg-white/25"></span>
+          <div class="flex items-center gap-1">
+            {COFFEE_CODE.social.map((s) => (
+              <a href={s.href} target="_blank" rel="noopener" aria-label={`${s.label} @${COFFEE_CODE.handle}`} title={`${s.label} @${COFFEE_CODE.handle}`}
+                class="grid place-items-center h-8 w-8 rounded-full hover:bg-white/15 hover:text-white transition">
+                <Icon name={s.icon} class="h-4 w-4" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- barra inferior en móvil: aparece mientras estás creando -->
+  <div data-mobile-bar class="lg:hidden fixed inset-x-3 bottom-3 z-40 translate-y-[150%] transition-transform duration-500 ease-out">
+    <div class="flex items-center gap-2 rounded-full bg-navy text-white p-2 pl-5 shadow-2xl shadow-navy/40">
+      <div class="flex-1 min-w-0">
+        <p class="text-[10px] text-white/50 font-semibold uppercase tracking-widest leading-none">Total</p>
+        <p data-total class="font-display font-black text-2xl leading-tight">$0.00</p>
+      </div>
+      <button data-see-burger class="inline-flex items-center gap-1.5 rounded-full bg-white/10 px-4 py-3 text-sm font-semibold active:scale-95 transition">
+        <Icon name="tabler:burger" class="h-5 w-5" /> Ver
+      </button>
+      <a href="#pedido" class="inline-flex items-center gap-1.5 rounded-full bg-brand px-5 py-3 text-sm font-semibold active:scale-95 transition">
+        Pedido <Icon name="tabler:arrow-right" class="h-4 w-4" />
+      </a>
+    </div>
+  </div>
+  </div>
+
+  <MenuData />
+  <script>
+    import '../scripts/home';
+  </script>
+</Layout>

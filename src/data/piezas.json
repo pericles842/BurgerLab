@@ -1,0 +1,304 @@
+{
+  "panes": [
+    {
+      "id": "brioche-top",
+      "src": "/piezas/panes/brioche-top.png",
+      "w": 233,
+      "h": 118
+    },
+    {
+      "id": "brioche-bottom",
+      "src": "/piezas/panes/brioche-bottom.png",
+      "w": 214,
+      "h": 86
+    },
+    {
+      "id": "negro-top",
+      "src": "/piezas/panes/negro-top.png",
+      "w": 225,
+      "h": 114
+    },
+    {
+      "id": "negro-bottom",
+      "src": "/piezas/panes/negro-bottom.png",
+      "w": 221,
+      "h": 90
+    },
+    {
+      "id": "integral-top",
+      "src": "/piezas/panes/integral-top.png",
+      "w": 223,
+      "h": 115
+    },
+    {
+      "id": "integral-bottom",
+      "src": "/piezas/panes/integral-bottom.png",
+      "w": 217,
+      "h": 87
+    }
+  ],
+  "proteinas": [
+    {
+      "id": "res-parrilla",
+      "src": "/piezas/proteinas/res-parrilla.png",
+      "w": 236,
+      "h": 100
+    },
+    {
+      "id": "smash",
+      "src": "/piezas/proteinas/smash.png",
+      "w": 238,
+      "h": 92
+    },
+    {
+      "id": "pollo-parrilla",
+      "src": "/piezas/proteinas/pollo-parrilla.png",
+      "w": 238,
+      "h": 94
+    },
+    {
+      "id": "pollo-crispy",
+      "src": "/piezas/proteinas/pollo-crispy.png",
+      "w": 233,
+      "h": 105
+    },
+    {
+      "id": "veggie",
+      "src": "/piezas/proteinas/veggie.png",
+      "w": 224,
+      "h": 92
+    },
+    {
+      "id": "pulled-pork",
+      "src": "/piezas/proteinas/pulled-pork.png",
+      "w": 232,
+      "h": 108
+    }
+  ],
+  "quesos-extras": [
+    {
+      "id": "cheddar",
+      "src": "/piezas/quesos-extras/cheddar.png",
+      "w": 231,
+      "h": 108
+    },
+    {
+      "id": "americano",
+      "src": "/piezas/quesos-extras/americano.png",
+      "w": 237,
+      "h": 98
+    },
+    {
+      "id": "mozzarella",
+      "src": "/piezas/quesos-extras/mozzarella.png",
+      "w": 238,
+      "h": 103
+    },
+    {
+      "id": "suizo",
+      "src": "/piezas/quesos-extras/suizo.png",
+      "w": 238,
+      "h": 110
+    },
+    {
+      "id": "tocino",
+      "src": "/piezas/quesos-extras/tocino.png",
+      "w": 262,
+      "h": 117
+    },
+    {
+      "id": "huevo",
+      "src": "/piezas/quesos-extras/huevo.png",
+      "w": 221,
+      "h": 97
+    }
+  ],
+  "vegetales": [
+    {
+      "id": "lechuga",
+      "src": "/piezas/vegetales/lechuga.png",
+      "w": 190,
+      "h": 105
+    },
+    {
+      "id": "mix-verde",
+      "src": "/piezas/vegetales/mix-verde.png",
+      "w": 189,
+      "h": 105
+    },
+    {
+      "id": "tomate",
+      "src": "/piezas/vegetales/tomate.png",
+      "w": 205,
+      "h": 91
+    },
+    {
+      "id": "cebolla-blanca",
+      "src": "/piezas/vegetales/cebolla-blanca.png",
+      "w": 157,
+      "h": 96
+    },
+    {
+      "id": "cebolla-morada",
+      "src": "/piezas/vegetales/cebolla-morada.png",
+      "w": 162,
+      "h": 92
+    },
+    {
+      "id": "cebolla-caramelizada",
+      "src": "/piezas/vegetales/cebolla-caramelizada.png",
+      "w": 164,
+      "h": 98
+    },
+    {
+      "id": "pepinillos",
+      "src": "/piezas/vegetales/pepinillos.png",
+      "w": 137,
+      "h": 91
+    },
+    {
+      "id": "aguacate",
+      "src": "/piezas/vegetales/aguacate.png",
+      "w": 142,
+      "h": 108
+    },
+    {
+      "id": "jalapenos",
+      "src": "/piezas/vegetales/jalapenos.png",
+      "w": 130,
+      "h": 93
+    }
+  ],
+  "toppings-salsas": [
+    {
+      "id": "pina",
+      "src": "/piezas/toppings-salsas/pina.png",
+      "w": 157,
+      "h": 95
+    },
+    {
+      "id": "champinones",
+      "src": "/piezas/toppings-salsas/champinones.png",
+      "w": 194,
+      "h": 88
+    },
+    {
+      "id": "aros-cebolla",
+      "src": "/piezas/toppings-salsas/aros-cebolla.png",
+      "w": 183,
+      "h": 100
+    },
+    {
+      "id": "ketchup",
+      "src": "/piezas/toppings-salsas/ketchup.png",
+      "w": 169,
+      "h": 78
+    },
+    {
+      "id": "mostaza",
+      "src": "/piezas/toppings-salsas/mostaza.png",
+      "w": 154,
+      "h": 81
+    },
+    {
+      "id": "mayonesa",
+      "src": "/piezas/toppings-salsas/mayonesa.png",
+      "w": 160,
+      "h": 79
+    },
+    {
+      "id": "bbq",
+      "src": "/piezas/toppings-salsas/bbq.png",
+      "w": 152,
+      "h": 82
+    },
+    {
+      "id": "miel-mostaza",
+      "src": "/piezas/toppings-salsas/miel-mostaza.png",
+      "w": 141,
+      "h": 86
+    },
+    {
+      "id": "salsa-rosada",
+      "src": "/piezas/toppings-salsas/salsa-rosada.png",
+      "w": 137,
+      "h": 84
+    }
+  ],
+  "bebidas": [
+    {
+      "id": "cola",
+      "src": "/piezas/bebidas/cola.png",
+      "w": 116,
+      "h": 207
+    },
+    {
+      "id": "naranja",
+      "src": "/piezas/bebidas/naranja.png",
+      "w": 114,
+      "h": 206
+    },
+    {
+      "id": "limonada",
+      "src": "/piezas/bebidas/limonada.png",
+      "w": 114,
+      "h": 207
+    },
+    {
+      "id": "malteada-chocolate",
+      "src": "/piezas/bebidas/malteada-chocolate.png",
+      "w": 110,
+      "h": 212
+    },
+    {
+      "id": "malteada-fresa",
+      "src": "/piezas/bebidas/malteada-fresa.png",
+      "w": 109,
+      "h": 212
+    },
+    {
+      "id": "agua",
+      "src": "/piezas/bebidas/agua.png",
+      "w": 78,
+      "h": 208
+    }
+  ],
+  "acompanantes": [
+    {
+      "id": "papas",
+      "src": "/piezas/acompanantes/papas.png",
+      "w": 201,
+      "h": 183
+    },
+    {
+      "id": "papas-rizadas",
+      "src": "/piezas/acompanantes/papas-rizadas.png",
+      "w": 183,
+      "h": 183
+    },
+    {
+      "id": "camote",
+      "src": "/piezas/acompanantes/camote.png",
+      "w": 207,
+      "h": 179
+    },
+    {
+      "id": "aros",
+      "src": "/piezas/acompanantes/aros.png",
+      "w": 192,
+      "h": 177
+    },
+    {
+      "id": "nuggets",
+      "src": "/piezas/acompanantes/nuggets.png",
+      "w": 194,
+      "h": 180
+    },
+    {
+      "id": "papas-queso-tocino",
+      "src": "/piezas/acompanantes/papas-queso-tocino.png",
+      "w": 215,
+      "h": 172
+    }
+  ]
+}

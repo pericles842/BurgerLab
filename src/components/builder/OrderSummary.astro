@@ -1,0 +1,53 @@
+---
+// Resumen del pedido. En la web: WhatsApp + compartir. En el quiosco: confirmar.
+import Icon from '../Icon.astro';
+interface Props { kiosk?: boolean; class?: string }
+const { kiosk = false, class: cls = '' } = Astro.props;
+---
+<div class:list={['rounded-[2rem] bg-white border border-brand-100 grid md:grid-cols-[1fr_auto] items-start gap-6 md:gap-8', kiosk ? 'p-8' : 'p-5 sm:p-10', cls]}>
+  <div class="min-w-0 flex flex-col">
+    <h2 class="font-display font-black uppercase text-3xl sm:text-4xl tracking-tight flex items-center gap-3">
+      <Icon name="tabler:shopping-bag" class="h-8 w-8 text-brand" /> Tu pedido
+    </h2>
+    <p class="text-navy/60 mt-1 font-semibold" data-summary-name>Mi burger</p>
+    <!-- lista con scroll propio: la caja no crece con muchos ingredientes (data-lenis-prevent deja usar la rueda dentro) -->
+    <div class="relative mt-5">
+      <ul data-summary data-lenis-prevent
+        class:list={['summary-scroll divide-y divide-brand-100 overflow-y-auto overscroll-contain pr-3', kiosk ? 'max-h-[46vh]' : 'max-h-[300px] sm:max-h-[360px]']}></ul>
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-white to-transparent"></div>
+    </div>
+  </div>
+  <!-- precio: primero en móvil y siempre arriba de su caja en escritorio -->
+  <div class="order-first md:order-none md:sticky md:top-24 md:w-80 flex flex-col gap-3 rounded-3xl bg-brand-50 p-5 md:bg-transparent md:p-0 md:rounded-none md:border-l md:border-brand-100 md:pl-10">
+    <p class="text-xs text-navy/50 font-semibold uppercase tracking-widest">Total a pagar</p>
+    <p data-total class="font-display font-black text-6xl text-brand">$0.00</p>
+    <div class="flex items-center justify-between my-2">
+      <span class:list={['font-semibold', kiosk ? 'text-base' : 'text-sm']}>Cantidad</span>
+      <div class="flex items-center rounded-full border border-brand-100 bg-brand-50">
+        <button data-qty="-1" class:list={['grid place-items-center hover:text-brand', kiosk ? 'h-14 w-14' : 'h-10 w-10']} aria-label="Menos"><Icon name="tabler:minus" class="h-5 w-5" /></button>
+        <span data-qty-value class:list={['text-center font-bold', kiosk ? 'w-10 text-xl' : 'w-8']}>1</span>
+        <button data-qty="1" class:list={['grid place-items-center hover:text-brand', kiosk ? 'h-14 w-14' : 'h-10 w-10']} aria-label="Más"><Icon name="tabler:plus" class="h-5 w-5" /></button>
+      </div>
+    </div>
+    {kiosk ? (
+      <>
+        <button data-confirm data-requires-protein class="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-5 text-lg font-semibold text-white shadow-lg shadow-brand/30 hover:bg-brand-600 transition disabled:opacity-40">
+          <Icon name="tabler:circle-check" class="h-6 w-6" /> Confirmar pedido
+        </button>
+        <button data-close-summary class="inline-flex items-center justify-center gap-2 rounded-full border-2 border-navy px-6 py-4 text-lg font-semibold hover:bg-navy hover:text-white transition">
+          <Icon name="tabler:arrow-left" class="h-5 w-5" /> Seguir editando
+        </button>
+      </>
+    ) : (
+      <>
+        <a data-order data-requires-protein target="_blank" rel="noopener" class="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-6 py-3.5 font-semibold text-white shadow-lg shadow-brand/30 hover:bg-brand-600 transition aria-disabled:opacity-40 aria-disabled:pointer-events-none">
+          <Icon name="tabler:brand-whatsapp" class="h-5 w-5" /> Pedir por WhatsApp
+        </a>
+        <button data-share class="inline-flex items-center justify-center gap-2 rounded-full border-2 border-navy px-6 py-3 font-semibold hover:bg-navy hover:text-white transition">
+          <Icon name="tabler:link" class="h-5 w-5" /> Copiar enlace
+        </button>
+      </>
+    )}
+    <p data-msg class="text-xs text-center text-navy/60 min-h-4"></p>
+  </div>
+</div>

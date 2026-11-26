@@ -1,0 +1,41 @@
+---
+// Pestañas de categorías. Horizontal con flechas (web) o vertical grande (quiosco).
+import Icon from '../Icon.astro';
+import { CATEGORIES } from '../../data/menu';
+interface Props { vertical?: boolean; class?: string }
+const { vertical = false, class: cls = '' } = Astro.props;
+---
+{vertical ? (
+  <div role="tablist" aria-orientation="vertical" class:list={['flex flex-col gap-2', cls]}>
+    {CATEGORIES.map((c, i) => (
+      <button role="tab" data-tab={c.id} aria-selected={i === 0 ? 'true' : 'false'}
+        class="group relative flex flex-col items-center justify-center gap-1.5 rounded-xl px-2 py-4 text-sm font-semibold transition text-navy/70 bg-white border-2 border-transparent active:scale-95 aria-selected:bg-brand aria-selected:text-white aria-selected:shadow-lg aria-selected:shadow-brand/30">
+        <Icon name={c.icon} class="h-8 w-8" />
+        <span class="leading-tight text-center">{c.title}</span>
+        <span data-count={c.id} class="hidden absolute top-2 right-2 rounded-md bg-navy text-white text-[11px] font-bold min-w-5 h-5 px-1 grid place-items-center group-aria-selected:bg-white group-aria-selected:text-brand"></span>
+      </button>
+    ))}
+  </div>
+) : (
+  <div class:list={['relative', cls]} data-tabs-wrap>
+    <button type="button" data-tabs-arrow="-1" aria-label="Ver categorías anteriores" tabindex="-1"
+      class="tabs-arrow absolute left-0 inset-y-0 z-10 hidden items-center pr-8 bg-gradient-to-r from-paper via-paper/95 to-transparent">
+      <span class="grid place-items-center h-9 w-9 rounded-lg bg-navy text-white shadow-md active:scale-95 transition"><Icon name="tabler:chevron-left" class="h-5 w-5" /></span>
+    </button>
+
+    <div role="tablist" data-tabs-scroll class="flex gap-2 overflow-x-auto no-scrollbar">
+      {CATEGORIES.map((c, i) => (
+        <button role="tab" data-tab={c.id} aria-selected={i === 0 ? 'true' : 'false'}
+          class="shrink-0 inline-flex items-center gap-1.5 rounded-lg px-3.5 sm:px-4 py-2.5 text-sm font-semibold border transition border-brand-100 bg-white hover:border-brand aria-selected:bg-brand aria-selected:text-white aria-selected:border-brand aria-selected:shadow-md aria-selected:shadow-brand/30">
+          <Icon name={c.icon} class="h-4 w-4" />{c.title}
+          <span data-count={c.id} class="hidden rounded-md bg-navy text-white text-[10px] font-bold px-1.5 py-0.5"></span>
+        </button>
+      ))}
+    </div>
+
+    <button type="button" data-tabs-arrow="1" aria-label="Ver más categorías" tabindex="-1"
+      class="tabs-arrow absolute right-0 inset-y-0 z-10 hidden items-center justify-end pl-8 bg-gradient-to-l from-paper via-paper/95 to-transparent">
+      <span class="grid place-items-center h-9 w-9 rounded-lg bg-navy text-white shadow-md active:scale-95 transition"><Icon name="tabler:chevron-right" class="h-5 w-5" /></span>
+    </button>
+  </div>
+)}

@@ -1,0 +1,19 @@
+---
+import { layersFor, marginFor } from '../lib/stack';
+interface Props { pick: Record<string, string[]>; class?: string; shadow?: boolean; eager?: boolean; build?: boolean; compact?: boolean }
+const { pick, class: cls = '', shadow = true, eager = false, build = false, compact = false } = Astro.props;
+// compact: capas más encimadas (hamburguesa más baja y apretada)
+const layers = layersFor(pick, compact ? 0.8 : undefined);
+const tuck = compact ? 0.68 : undefined;
+---
+<div class:list={['flex flex-col items-center', build && 'build', cls]} data-build={build ? '' : undefined}>
+  {layers.map((l, i) => (
+    <img
+      src={l.src}
+      alt=""
+      loading={eager ? 'eager' : 'lazy'}
+      class:list={['relative select-none pointer-events-none', shadow && 'drop-shadow-[0_8px_10px_rgba(21,34,65,.28)]', build && 'build-layer']}
+      style={`width:${l.scale * 100}%;margin-top:-${marginFor(layers, i, tuck)}%;z-index:${layers.length - i};--d:${(layers.length - 1 - i) * 0.22}s`}
+    />
+  ))}
+</div>

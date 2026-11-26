@@ -1,0 +1,198 @@
+---
+// Modo pedido: pantalla táctil para quioscos / tablets en el local.
+// Reutiliza los mismos componentes y la misma lógica del creador de la página principal.
+import Layout from '../layouts/Layout.astro';
+import Icon from '../components/Icon.astro';
+import BurgerStack from '../components/BurgerStack.astro';
+import BuilderPreview from '../components/builder/BuilderPreview.astro';
+import BuilderTabs from '../components/builder/BuilderTabs.astro';
+import BuilderPanels from '../components/builder/BuilderPanels.astro';
+import OrderSummary from '../components/builder/OrderSummary.astro';
+import MenuData from '../components/builder/MenuData.astro';
+import { PRESETS } from '../data/menu';
+import { money, priceOf } from '../lib/format';
+---
+<Layout title="Modo pedido · Burger Lab" bodyClass="overflow-hidden select-none touch-manipulation">
+  <div data-builder="kiosk" class="h-dvh flex flex-col bg-paper">
+    <!-- Barra superior -->
+    <header class="shrink-0 h-20 px-5 flex items-center gap-4 bg-white border-b border-brand-100">
+      <div class="flex items-center gap-2.5 shrink-0">
+        <span class="grid place-items-center h-12 w-12 rounded-2xl bg-brand text-white shadow-md shadow-brand/30">
+          <Icon name="tabler:burger" class="h-7 w-7" />
+        </span>
+        <div class="leading-none">
+          <p class="font-display font-black text-2xl tracking-tight">Burger<span class="text-brand">Lab</span></p>
+          <p class="text-xs font-semibold text-navy/50 uppercase tracking-widest mt-1">Arma tu pedido</p>
+        </div>
+      </div>
+
+      <div class="flex-1 min-w-0 flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <span class="hidden xl:inline text-sm font-semibold text-navy/50 shrink-0 ml-4">Combos rápidos:</span>
+        {Object.entries(PRESETS).map(([id, pr]) => (
+          <button data-preset={id} class="shrink-0 inline-flex items-center gap-2 rounded-full bg-brand-50 border-2 border-brand-100 pl-1.5 pr-4 py-1.5 font-semibold active:scale-95 transition hover:border-brand">
+            <span class="h-9 w-12 grid place-items-end overflow-hidden"><BurgerStack pick={pr.pick} class="w-9 mx-auto" shadow={false} /></span>
+            {pr.name}
+            <span class="text-brand text-sm font-bold">{money(priceOf(pr.pick))}</span>
+          </button>
+        ))}
+      </div>
+
+      <button data-reset class="shrink-0 inline-flex items-center gap-2 rounded-full border-2 border-navy px-5 py-3 font-semibold active:scale-95 transition">
+        <Icon name="tabler:trash" class="h-5 w-5" /> <span class="hidden md:inline">Empezar de nuevo</span>
+      </button>
+      <a href="/" class="shrink-0 grid place-items-center h-12 w-12 rounded-full text-navy/40 hover:text-navy hover:bg-brand-50" aria-label="Salir del modo pedido" title="Salir del modo pedido">
+        <Icon name="tabler:home" class="h-6 w-6" />
+      </a>
+    </header>
+
+    <!-- Cuerpo -->
+    <div class="flex-1 min-h-0 grid grid-cols-[112px_minmax(0,1fr)] lg:grid-cols-[124px_minmax(0,1fr)_400px]">
+      <nav class="min-h-0 overflow-y-auto no-scrollbar p-3 bg-brand-50 border-r border-brand-100" aria-label="Categorías">
+        <BuilderTabs vertical />
+      </nav>
+
+      <BuilderPanels kiosk class="min-h-0 overflow-y-auto p-6 overscroll-contain" />
+
+      <aside class="hidden lg:flex min-h-0 flex-col gap-4 p-4 pl-0">
+        <BuilderPreview kiosk class="flex-1 min-h-0" />
+        <button data-open-summary data-requires-protein class="shrink-0 inline-flex items-center justify-center gap-3 rounded-xl bg-brand px-6 py-6 text-xl font-display font-black uppercase text-white shadow-xl shadow-brand/30 active:scale-[0.98] transition disabled:opacity-40 disabled:shadow-none">
+          Finalizar pedido <Icon name="tabler:arrow-right" class="h-7 w-7" />
+        </button>
+      </aside>
+    </div>
+
+    <!-- Barra inferior (pantallas verticales / sin columna de vista previa) -->
+    <div class="lg:hidden shrink-0 flex items-center justify-between gap-4 bg-navy text-white px-5 py-4">
+      <div>
+        <p class="text-xs text-white/50 font-semibold uppercase tracking-widest">Total</p>
+        <p data-total class="font-display font-black text-3xl leading-none">$0.00</p>
+      </div>
+      <button data-open-summary data-requires-protein class="inline-flex items-center gap-3 rounded-full bg-brand px-8 py-4 text-lg font-semibold active:scale-95 transition disabled:opacity-40">
+        Finalizar pedido <Icon name="tabler:arrow-right" class="h-6 w-6" />
+      </button>
+    </div>
+
+    <!-- Resumen -->
+    <div data-overlay="summary" class="kiosk-overlay fixed inset-0 z-40 bg-navy/60 backdrop-blur-sm p-6 grid place-items-center" hidden>
+      <OrderSummary kiosk class="w-full max-w-4xl shadow-2xl" />
+    </div>
+
+    <!-- Confirmación -->
+    <div data-overlay="done" class="kiosk-overlay fixed inset-0 z-50 bg-brand text-white grid place-items-center p-8 text-center" hidden>
+      <div class="max-w-xl">
+        <span class="mx-auto grid place-items-center h-28 w-28 rounded-full bg-white text-brand shadow-2xl pop-in">
+          <Icon name="tabler:circle-check" class="h-16 w-16" />
+        </span>
+        <h2 class="mt-8 font-display font-black uppercase text-5xl sm:text-6xl leading-none">¡Pedido confirmado!</h2>
+        <p class="mt-4 text-xl font-medium text-white/85">Acércate a caja con tu número de orden</p>
+        <p class="mt-6 inline-block rounded-3xl bg-navy px-10 py-5 font-display font-black text-7xl tracking-tight" data-order-number>A-001</p>
+        <div class="mt-10 flex flex-col items-center gap-3">
+          <button data-new-order class="inline-flex items-center gap-2 rounded-full bg-white text-navy px-10 py-5 text-xl font-semibold active:scale-95 transition">
+            <Icon name="tabler:plus" class="h-6 w-6" /> Nuevo pedido
+          </button>
+          <p class="text-sm text-white/70">Volviendo al inicio en <span data-countdown>12</span> s</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pantalla de bienvenida (también aparece tras inactividad) -->
+    <div data-overlay="welcome" role="button" tabindex="0" aria-label="Toca para ordenar" class="kiosk-overlay fixed inset-0 z-[60] bg-navy text-white overflow-hidden grid place-items-center text-center cursor-pointer">
+      <svg class="absolute inset-0 h-full w-full text-white pointer-events-none" aria-hidden="true">
+        <defs>
+          <pattern id="k-braces" width="96" height="96" patternUnits="userSpaceOnUse">
+            <text x="10" y="40" font-family="Rubik, sans-serif" font-weight="900" font-size="28" fill="currentColor" opacity=".06">{'{ }'}</text>
+            <circle cx="72" cy="72" r="2" fill="currentColor" opacity=".1" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#k-braces)" />
+      </svg>
+      <div class="absolute inset-0" style="background: radial-gradient(circle at 50% 45%, rgba(51,108,255,.5), transparent 60%)"></div>
+      <div class="relative flex flex-col items-center px-6">
+        <p class="font-display font-black text-3xl tracking-tight">Burger<span class="text-brand">Lab</span></p>
+        <div class="mt-6 w-56 sm:w-64 float">
+          <BurgerStack pick={PRESETS.clasica.pick} eager build compact />
+        </div>
+        <h1 class="mt-8 font-display font-black uppercase leading-[0.9] text-6xl sm:text-8xl">Toca para<br /><span class="text-brand">ordenar</span></h1>
+        <p class="mt-6 text-xl text-white/70 font-medium">Arma tu hamburguesa capa por capa</p>
+        <span class="mt-10 grid place-items-center h-20 w-20 rounded-full bg-brand tap-pulse">
+          <Icon name="tabler:hand-finger" class="h-10 w-10" />
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <MenuData />
+
+  <script>
+    import type { BuilderDetail } from '../scripts/builder';
+
+    const IDLE_MS = 90_000;      // sin tocar la pantalla → vuelve a la bienvenida
+    const DONE_SECONDS = 12;     // tiempo en la pantalla de confirmación
+
+    const $ = <T extends Element = HTMLElement>(s: string) => document.querySelector<T>(s)!;
+    const $$ = <T extends Element = HTMLElement>(s: string) => [...document.querySelectorAll<T>(s)];
+    const overlay = (name: string) => $(`[data-overlay="${name}"]`);
+    const show = (name: string) => { overlay(name).hidden = false; };
+    const hide = (name: string) => { overlay(name).hidden = true; };
+    const api = () => (window as any).builder as { reset: () => void };
+
+    let ok = false;
+    document.addEventListener('builder:change', (e) => { ok = (e as CustomEvent<BuilderDetail>).detail.ok; });
+
+    // número de orden correlativo en este dispositivo
+    function nextOrderNumber() {
+      let n = 0;
+      try { n = Number(localStorage.getItem('burgerlab:order') || 0) + 1; localStorage.setItem('burgerlab:order', String(n)); }
+      catch { n = Math.floor(Math.random() * 900) + 100; }
+      return 'A-' + String(n % 1000).padStart(3, '0');
+    }
+
+    let countdown: number | undefined;
+    function startOver() {
+      clearInterval(countdown);
+      hide('summary'); hide('done');
+      api().reset();
+    }
+
+    document.addEventListener('click', (e) => {
+      const t = (e.target as HTMLElement).closest<HTMLElement>('[data-open-summary],[data-close-summary],[data-confirm],[data-new-order],[data-overlay]');
+      if (!t) return;
+      if (t.hasAttribute('data-open-summary')) { if (ok) show('summary'); }
+      else if (t.hasAttribute('data-close-summary')) hide('summary');
+      else if (t.hasAttribute('data-confirm')) {
+        if (!ok) return;
+        hide('summary');
+        $('[data-order-number]').textContent = nextOrderNumber();
+        show('done');
+        let left = DONE_SECONDS;
+        $('[data-countdown]').textContent = String(left);
+        clearInterval(countdown);
+        countdown = window.setInterval(() => {
+          left -= 1;
+          $('[data-countdown]').textContent = String(left);
+          if (left <= 0) { startOver(); show('welcome'); }
+        }, 1000);
+      }
+      else if (t.hasAttribute('data-new-order')) startOver();
+      else if (t.dataset.overlay === 'welcome') hide('welcome');
+      else if (t.dataset.overlay === 'summary' && e.target === t) hide('summary'); // tocar fuera cierra
+    });
+
+    // inactividad
+    let idle: number | undefined;
+    const bump = () => {
+      clearTimeout(idle);
+      idle = window.setTimeout(() => {
+        if (!overlay('welcome').hidden) return;
+        startOver();
+        show('welcome');
+      }, IDLE_MS);
+    };
+    ['pointerdown', 'keydown'].forEach((ev) => document.addEventListener(ev, bump, { passive: true }));
+    bump();
+
+    // evita el menú contextual y el zoom con doble toque en pantallas táctiles
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
+    $$('img').forEach((img) => (img.draggable = false));
+  </script>
+</Layout>

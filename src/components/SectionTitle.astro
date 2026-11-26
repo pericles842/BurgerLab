@@ -1,0 +1,11 @@
+---
+interface Props { class?: string; light?: boolean }
+const { class: cls = '', light = false } = Astro.props;
+---
+<div class:list={['flex items-center justify-center gap-4', cls]}>
+  <span class="h-1 w-10 sm:w-16 rounded-full bg-brand"></span>
+  <h2 class:list={['font-display font-black uppercase tracking-tight text-2xl sm:text-3xl text-center', light ? 'text-white' : 'text-navy']}>
+    <slot />
+  </h2>
+  <span class="h-1 w-10 sm:w-16 rounded-full bg-brand"></span>
+</div>
