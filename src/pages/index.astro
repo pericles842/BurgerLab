@@ -109,7 +109,7 @@ const features = [
     </svg>
     <div class="absolute -top-40 -left-40 h-[30rem] w-[30rem] rounded-full bg-brand/10 blur-3xl"></div>
 
-    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 pt-10 pb-20 lg:pt-14 grid lg:grid-cols-[1.05fr_1fr] gap-10 items-center">
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 pt-10 pb-20 lg:pt-14 grid grid-cols-1 lg:grid-cols-[1.05fr_1fr] gap-10 items-center">
       <!-- Texto -->
       <div class="relative z-10">
         <h1 class="font-display font-black uppercase leading-[0.9] tracking-tight text-[2.6rem] min-[400px]:text-[3rem] sm:text-7xl lg:text-[5.6rem]">
@@ -125,10 +125,10 @@ const features = [
           Hamburguesas premium armadas por ti, capa por capa, con ingredientes frescos y sabores audaces.
         </p>
         <div class="mt-7 sm:mt-8 grid grid-cols-2 sm:flex sm:flex-wrap gap-3">
-          <a href="#crear" class="group inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 sm:px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand/30 hover:bg-brand-600 transition">
+          <a href="#crear" class="group inline-flex items-center justify-center gap-2 whitespace-nowrap text-[15px] sm:text-base rounded-full bg-brand px-4 sm:px-7 py-3.5 font-semibold text-white shadow-lg shadow-brand/30 hover:bg-brand-600 transition">
             Crear mi burger <Icon name="tabler:arrow-right" class="h-5 w-5 transition group-hover:translate-x-1" />
           </a>
-          <a href="#menu" class="text-center rounded-full border-2 border-navy px-5 sm:px-7 py-3 font-semibold hover:bg-navy hover:text-white transition">Ver menú</a>
+          <a href="#menu" class="inline-flex items-center justify-center whitespace-nowrap text-[15px] sm:text-base rounded-full border-2 border-navy px-4 sm:px-7 py-3 font-semibold hover:bg-navy hover:text-white transition">Ver menú</a>
         </div>
         <dl class="mt-8 sm:mt-10 grid grid-cols-3 gap-2 sm:gap-3 max-w-md">
           {[
@@ -262,12 +262,14 @@ const features = [
       <SectionTitle>Crea tu burger</SectionTitle>
       <p class="mt-3 text-center text-navy/70">Elige cada capa y mírala construirse en tiempo real.</p>
     </div>
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 pb-16 grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] gap-8">
-      <div class="lg:sticky lg:top-20 self-start">
+    <!-- móvil: la vista previa (compacta) y las pestañas quedan fijas arriba mientras eliges;
+         desde md: dos columnas, vista previa fija a la izquierda -->
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 pb-16 grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-6 lg:gap-8">
+      <div data-preview-sticky class="sticky top-16 z-30 self-start -mx-4 px-4 sm:-mx-6 sm:px-6 pt-2 bg-paper/90 backdrop-blur md:top-20 md:mx-0 md:px-0 md:pt-0 md:bg-transparent md:backdrop-blur-none">
         <BuilderPreview />
       </div>
-      <div>
-        <div class="sticky top-16 z-30 -mx-4 px-4 sm:mx-0 sm:px-0 bg-paper/90 backdrop-blur py-3">
+      <div class="min-w-0">
+        <div data-tabs-sticky class="sticky top-[calc(4rem+var(--pv-h,0px))] md:top-16 z-20 -mx-4 px-4 sm:-mx-6 sm:px-6 md:mx-0 md:px-0 bg-paper/90 backdrop-blur py-3">
           <BuilderTabs />
         </div>
         <BuilderPanels />
@@ -277,7 +279,7 @@ const features = [
 
   <!-- ============ BANNER COMBOS ============ -->
   <section id="combos" class="mx-auto max-w-7xl px-4 sm:px-6 scroll-mt-20">
-    <div data-reveal="scale" class="relative rounded-[2rem] bg-navy overflow-hidden grid md:grid-cols-[2fr_3fr] items-center">
+    <div data-reveal="scale" class="relative rounded-[2rem] bg-navy overflow-hidden grid grid-cols-1 md:grid-cols-[2fr_3fr] items-center">
       <div class="absolute inset-0 opacity-60" style="background: radial-gradient(circle at 75% 55%, rgba(51,108,255,.45), transparent 55%)"></div>
       <div class="relative p-7 sm:p-12 text-center md:text-left">
         <p data-reveal style="--rd:0ms" class="font-display font-black uppercase text-brand tracking-[0.3em] text-sm flex items-center gap-3 justify-center md:justify-start">
@@ -322,7 +324,7 @@ const features = [
     <svg viewBox="0 0 1440 56" preserveAspectRatio="none" class="absolute -top-[55px] left-0 w-full h-14 text-brand" aria-hidden="true">
       <path fill="currentColor" d={TORN} />
     </svg>
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 py-12 grid md:grid-cols-[1fr_auto] gap-8 items-center">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 py-12 grid grid-cols-1 md:grid-cols-[1fr_auto] gap-8 items-center">
       <div>
         <h2 class="font-display font-black uppercase text-[2.1rem] min-[400px]:text-4xl sm:text-5xl leading-none">¿Antojo de burger?</h2>
         <p class="mt-2 font-display font-black uppercase text-navy text-lg sm:text-xl">Créala y pídela en menos de un minuto.</p>

@@ -43,6 +43,21 @@ function init(data: Data, root: HTMLElement) {
   };
   const scrollTarget = () => q(root.dataset.scrollTarget || '#crear');
 
+  // web: alto de la vista previa fija (en móvil las pestañas se pegan justo debajo de ella)
+  const pvSticky = q('[data-preview-sticky]');
+  if (pvSticky) new ResizeObserver(() => document.documentElement.style.setProperty('--pv-h', `${pvSticky.offsetHeight}px`)).observe(pvSticky);
+
+  // al cambiar de paso: dejar el inicio del panel justo bajo la barra de pestañas fija,
+  // sin mover la página si ya está a la vista (así la vista previa nunca se esconde)
+  function revealPanels() {
+    const panels = q('[data-panels]');
+    const bar = q('[data-tabs-sticky]');
+    if (!panels || !bar) return scrollToEl(scrollTarget());
+    const barBottom = (parseFloat(getComputedStyle(bar).top) || 0) + bar.offsetHeight;
+    const y = panels.getBoundingClientRect().top;
+    if (y < barBottom - 1 || y > window.innerHeight * 0.6) scrollToEl(panels, -barBottom);
+  }
+
   // --- estado <-> URL (solo en la web, no en el quiosco) ---
   function fromHash() {
     const h = new URLSearchParams(location.hash.slice(1));
@@ -149,13 +164,14 @@ function init(data: Data, root: HTMLElement) {
       if (!it) continue;
       const img = document.createElement('img');
       img.src = it.img; img.alt = it.name;
-      img.className = (kiosk ? 'h-20' : 'h-14 sm:h-16') + ' object-contain drop-shadow-lg' + (lastAdded === `${cid}:${it.id}` ? ' layer-in' : '');
+      img.className = (kiosk ? 'h-20' : 'h-10 md:h-16') + ' object-contain drop-shadow-lg' + (lastAdded === `${cid}:${it.id}` ? ' layer-in' : '');
       extras.append(img);
     }
     if (!extras.children.length) {
       const p = document.createElement('p');
-      p.className = 'self-center text-xs text-white/50 text-center leading-snug';
-      p.textContent = 'Agrega papas y bebida para hacerlo combo.';
+      p.className = 'self-center text-[11px] md:text-xs text-white/50 leading-snug ' + (kiosk ? 'text-center' : 'text-left md:text-center');
+      if (kiosk) p.textContent = 'Agrega papas y bebida para hacerlo combo.';
+      else p.innerHTML = '<span class="md:hidden">Sin papas ni bebida</span><span class="hidden md:inline">Agrega papas y bebida para hacerlo combo.</span>';
       extras.append(p);
     }
   }
@@ -274,8 +290,8 @@ function init(data: Data, root: HTMLElement) {
     const t = (e.target as HTMLElement).closest<HTMLElement>('[data-item],[data-tab],[data-goto],[data-preset],[data-qty],[data-reset],[data-share]');
     if (!t) return;
     if (t.dataset.item) toggle(t.dataset.cat!, t.dataset.item);
-    else if (t.dataset.tab) showTab(t.dataset.tab);
-    else if (t.dataset.goto) { showTab(t.dataset.goto); if (!kiosk) scrollToEl(scrollTarget()); }
+    else if (t.dataset.tab) { showTab(t.dataset.tab); if (!kiosk) revealPanels(); }
+    else if (t.dataset.goto) { showTab(t.dataset.goto); if (!kiosk) revealPanels(); }
     else if (t.dataset.preset) { loadPreset(t.dataset.preset); if (!kiosk) scrollToEl(scrollTarget()); }
     else if (t.dataset.qty) { qty = Math.max(1, Math.min(20, qty + Number(t.dataset.qty))); render(); }
     else if (t.hasAttribute('data-reset')) reset();

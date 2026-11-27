@@ -24,7 +24,7 @@ const { kiosk = false, class: cls = '' } = Astro.props;
       </div>
 
       <!-- opciones -->
-      <div class:list={['grid', kiosk ? 'grid-cols-2 xl:grid-cols-3 gap-4' : 'grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3']}>
+      <div class:list={['grid', kiosk ? 'grid-cols-2 xl:grid-cols-3 gap-4' : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3']}>
         {c.items.map((it) => (
           <button data-item={it.id} data-cat={c.id} aria-pressed="false"
             class:list={['group relative rounded-xl bg-white border-2 border-brand-100/60 text-left transition hover:border-brand-200 hover:shadow-lg hover:shadow-brand/10 aria-pressed:border-brand aria-pressed:bg-brand-50',
